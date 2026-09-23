@@ -82,6 +82,16 @@ $j(document).ready(function () {
   });
   $escolas.trigger('chosen:updated');
 
+  $escolas.change(function () {
+    if (($escolas.val() || []).indexOf('all') === -1) {
+      return;
+    }
+    $escolas.find('option').each(function () {
+      this.selected = this.value !== 'all';
+    });
+    $escolas.trigger('chosen:updated');
+  });
+
   $instituicao.change(function () {
     getResource({
       url: getResourceUrlBuilder.buildUrl('/module/Api/escola', 'escolas-para-selecao', {
@@ -90,7 +100,7 @@ $j(document).ready(function () {
       dataType: 'json',
       data: {},
       success: function (response) {
-        let options = '';
+        let options = '<option value="all">Todas as escolas</option>';
         $j.each(response['options'], function (id, nome) {
           options += '<option value="' + id.replace(/^__/, '') + '">' + nome + '</option>';
         });

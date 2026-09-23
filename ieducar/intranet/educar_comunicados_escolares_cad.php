@@ -70,7 +70,7 @@ return new class extends clsCadastro
         $this->campoOculto(nome: 'id', valor: $this->id);
 
         $this->inputsHelper()->dynamic(helperNames: 'instituicao', inputOptions: ['value' => $this->ref_cod_instituicao]);
-        $this->campoLista(nome: 'escolas', campo: 'Escola(s)', valor: $this->escolasDisponiveis(), multiple: 10);
+        $this->campoLista(nome: 'escolas', campo: 'Escola(s)', valor: ['all' => 'Todas as escolas'] + $this->escolasDisponiveis(), multiple: 10);
         $this->campoOculto(nome: 'escolas_selecionadas', valor: implode(',', $this->escolas));
 
         // text
