@@ -24,6 +24,8 @@ return new class extends clsCadastro
 
     public string $date = '';
 
+    public array $escolas = [];
+
     public function Inicializar()
     {
         $retorno = 'Novo';
@@ -39,7 +41,7 @@ return new class extends clsCadastro
             if ($registro) {
 
                 $this->ref_cod_instituicao = $registro->institution_id;
-                $this->ref_cod_escola = $registro->school_id;
+                $this->escolas = $registro->schools()->pluck('cod_escola')->all();
                 $this->titulo = $registro->title;
                 $this->descricao = $registro->description;
                 $this->local = $registro->local;
@@ -68,7 +70,8 @@ return new class extends clsCadastro
         $this->campoOculto(nome: 'id', valor: $this->id);
 
         $this->inputsHelper()->dynamic(helperNames: 'instituicao', inputOptions: ['value' => $this->ref_cod_instituicao]);
-        $this->inputsHelper()->dynamic(helperNames: 'escola', inputOptions: ['value' => $this->ref_cod_escola]);
+        $this->campoLista(nome: 'escolas', campo: 'Escola(s)', valor: $this->escolasDisponiveis(), multiple: 10);
+        $this->campoOculto(nome: 'escolas_selecionadas', valor: implode(',', $this->escolas));
 
         // text
         $this->campoTexto(nome: 'titulo', campo: 'Título', valor: $this->titulo, tamanhovisivel: 30, tamanhomaximo: 255, obrigatorio: true);
@@ -77,9 +80,26 @@ return new class extends clsCadastro
         $this->inputsHelper()->date(attrName: 'data', inputOptions: ['label' => 'Data', 'placeholder' => 'dd/mm/yyyy', 'value' => $this->date]);
         $this->campoHora(nome: 'hora', campo: 'Hora', valor: $this->hora, obrigatorio: true);
 
+        Portabilis_View_Helper_Application::loadChosenLib(viewInstance: $this);
         Portabilis_View_Helper_Application::loadJavascript(viewInstance: $this, files: [
             '/vendor/legacy/Cadastro/Assets/Javascripts/ComunicadosEscolares.js',
         ]);
+    }
+
+    private function escolasDisponiveis(): array
+    {
+        if (App_Model_IedFinder::usuarioNivelBibliotecaEscolar(codUsuario: $this->pessoa_logada)) {
+            $escolas = [];
+            foreach (App_Model_IedFinder::getEscolasUser(cod_usuario: $this->pessoa_logada) as $escola) {
+                $escolas[$escola['ref_cod_escola']] = $escola['nome'];
+            }
+
+            return $escolas;
+        }
+
+        $instituicao = $this->ref_cod_instituicao ?: (new clsPermissoes)->getInstituicao(int_idpes_usuario: $this->pessoa_logada);
+
+        return App_Model_IedFinder::getEscolas(instituicaoId: $instituicao);
     }
 
     public function Novo()
