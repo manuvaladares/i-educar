@@ -22,7 +22,7 @@ var simpleSearchNeighborhoodOptions = {
         });
 
         var hasExactMatch = results.some(function (item) {
-          return normalizeNeighborhood(extractNeighborhoodName(item.value)) === normalizedzterm;
+          return normalizeNeighborhood(extractNeighborhoodName(item.value)) === normalizedTerm;
         });
 
         results.sort(function(a, b) {
