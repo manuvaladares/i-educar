@@ -21,7 +21,7 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('school_notices', 'school_id')) {
             Schema::table('school_notices', function (Blueprint $table) {
-                $table->unsignedSmallInteger('school_id')->nullable();
+                $table->unsignedInteger('school_id')->nullable();
                 $table->foreign('school_id')
                     ->references('cod_escola')
                     ->on('pmieducar.escola')

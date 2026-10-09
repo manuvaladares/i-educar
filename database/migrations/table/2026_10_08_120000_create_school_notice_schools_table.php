@@ -18,7 +18,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->unsignedSmallInteger('school_id');
+            $table->unsignedInteger('school_id');
             $table->foreign('school_id')
                 ->references('cod_escola')
                 ->on('pmieducar.escola')
