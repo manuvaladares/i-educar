@@ -21,13 +21,17 @@ var simpleSearchNeighborhoodOptions = {
           return normalizeNeighborhood(extractNeighborhoodName(item.value)).indexOf(normalizedTerm) !== -1;
         });
 
+        var hasExactMatch = results.some(function (item) {
+          return normalizeNeighborhood(extractNeighborhoodName(item.value)) === normalizedzterm;
+        });
+
         results.sort(function(a, b) {
           return a.label.localeCompare(b.label, 'pt-BR');
         });
 
         $element.data('neighborhood-last-results', results.slice());
 
-        if (results.length === 0) {
+        if (!hasExactMatch) {
           results.push({
             value: term,
             label: 'Criar Bairro: ' + term,
